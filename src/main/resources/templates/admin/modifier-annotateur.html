@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier Annotateur</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom Admin Styles -->
+    <style>
+        /* Navbar Styles */
+        .modern-navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            padding: 1rem 0;
+        }
+
+        .modern-navbar.scrolled {
+            padding: 0.5rem 0;
+            box-shadow: 0 2px 30px rgba(0,0,0,0.2);
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            color: white !important;
+            font-weight: 600;
+            font-size: 1.5rem;
+            text-decoration: none;
+        }
+
+        .brand-icon {
+            background: rgba(255,255,255,0.2);
+            padding: 0.5rem;
+            border-radius: 50%;
+            margin-right: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-icon i {
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: auto;
+        }
+
+        .modern-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn-create {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .btn-create:hover {
+            background: linear-gradient(45deg, #218838, #1aa085);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn-list {
+            background: linear-gradient(45deg, #007bff, #6610f2);
+            color: white;
+        }
+
+        .btn-list:hover {
+            background: linear-gradient(45deg, #0056b3, #520dc2);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+        }
+
+        .btn-manage {
+            background: linear-gradient(45deg, #fd7e14, #e83e8c);
+            color: white;
+        }
+
+        .btn-manage:hover {
+            background: linear-gradient(45deg, #e36209, #d91a72);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(253, 126, 20, 0.4);
+        }
+
+        .btn-logout {
+            background: linear-gradient(45deg, #dc3545, #6f42c1);
+            color: white;
+        }
+
+        .btn-logout:hover {
+            background: linear-gradient(45deg, #c82333, #5a32a3);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+        }
+
+        .navbar-toggler {
+            border: none;
+            padding: 0.5rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+        }
+
+        .navbar-toggler i {
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: 0 0 0 0.2rem rgba(255,255,255,0.25);
+        }
+
+        @media (max-width: 768px) {
+            .nav-actions {
+                flex-direction: column;
+                width: 100%;
+                margin-top: 1rem;
+                gap: 0.5rem;
+            }
+
+            .modern-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Page Styles */
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .page-container {
+            padding-top: 2rem;
+            padding-bottom: 3rem;
+        }
+
+        .form-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .page-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 1rem auto;
+            border-radius: 2px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-label i {
+            color: #667eea;
+            font-size: 1rem;
+        }
+
+        .form-control {
+            border: 2px solid rgba(102, 126, 234, 0.1);
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+            background: rgba(255, 255, 255, 1);
+        }
+
+        .form-control:hover {
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            border: none;
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary-custom:hover {
+            background: linear-gradient(45deg, #218838, #1aa085);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+            color: white;
+        }
+
+        .btn-secondary-custom {
+            background: linear-gradient(45deg, #6c757d, #495057);
+            border: none;
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-secondary-custom:hover {
+            background: linear-gradient(45deg, #545b62, #383f45);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+
+        .btn-outline-custom {
+            background: transparent;
+            border: 2px solid #667eea;
+            color: #667eea;
+            padding: 0.75rem 2rem;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-left: auto;
+        }
+
+        .btn-outline-custom:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            text-decoration: none;
+        }
+
+        .help-text {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-card {
+                padding: 2rem 1.5rem;
+                margin: 1rem;
+            }
+
+            .page-title {
+                font-size: 1.8rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn-outline-custom {
+                margin-left: 0;
+            }
+        }
+
+        /* Animation for form appearance */
+        .form-card {
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* User avatar section */
+        .user-avatar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .avatar-circle {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .avatar-circle i {
+            font-size: 2rem;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar integrated directly in the page -->
+<nav class="navbar navbar-expand-lg modern-navbar sticky-top">
+    <div class="container">
+        <div class="navbar-brand">
+            <div class="brand-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <span>Admin Dashboard</span>
+        </div>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="nav-actions">
+                <a th:href="@{/admin/creer-dataset}" class="modern-btn btn-create">
+                    <i class="fas fa-plus"></i>
+                    <span>Créer Dataset</span>
+                </a>
+                <a th:href="@{/admin/liste-datasets}" class="modern-btn btn-list">
+                    <i class="fas fa-list"></i>
+                    <span>Liste Datasets</span>
+                </a>
+                <a th:href="@{/admin/gerer-annotateurs}" class="modern-btn btn-manage">
+                    <i class="fas fa-users"></i>
+                    <span>Gérer Annotateurs</span>
+                </a>
+                <form th:action="@{/logout}" method="post" style="margin: 0;">
+                    <button type="submit" class="modern-btn btn-logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Se déconnecter</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container page-container">
+    <div class="form-card">
+        <h1 class="page-title">
+            <i class="fas fa-user-edit"></i>
+            Modifier Annotateur
+        </h1>
+
+        <div class="user-avatar">
+            <div class="avatar-circle">
+                <i class="fas fa-user"></i>
+            </div>
+        </div>
+
+        <form th:action="@{'/admin/modifier-annotateur/' + ${annotateur.utilisateur.id}}" method="post">
+            <div class="form-group">
+                <label for="nom" class="form-label">
+                    <i class="fas fa-user-tag"></i>
+                    Nom
+                </label>
+                <input type="text" class="form-control" id="nom" name="nom" th:value="${annotateur.utilisateur.nom}" placeholder="Entrez le nom de famille" required>
+                <div class="help-text">Nom de famille de l'annotateur</div>
+            </div>
+
+            <div class="form-group">
+                <label for="prenom" class="form-label">
+                    <i class="fas fa-id-card"></i>
+                    Prénom
+                </label>
+                <input type="text" class="form-control" id="prenom" name="prenom" th:value="${annotateur.utilisateur.prenom}" placeholder="Entrez le prénom" required>
+                <div class="help-text">Prénom de l'annotateur</div>
+            </div>
+
+            <div class="form-group">
+                <label for="login" class="form-label">
+                    <i class="fas fa-at"></i>
+                    Login
+                </label>
+                <input type="text" class="form-control" id="login" name="login" th:value="${annotateur.utilisateur.login}" placeholder="Entrez le nom d'utilisateur" required>
+                <div class="help-text">Nom d'utilisateur unique pour la connexion</div>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn-primary-custom">
+                    <i class="fas fa-save"></i>
+                    Enregistrer les modifications
+                </button>
+                <a th:href="@{/admin/gerer-annotateurs}" class="btn-outline-custom">
+                    <i class="fas fa-arrow-left"></i>
+                    Retour à la liste
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Add scroll effect to navbar
+    window.addEventListener('scroll', function() {
+        const navbar = document.querySelector('.modern-navbar');
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
+
+    // Form validation enhancement
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const submitBtn = document.querySelector('.btn-primary-custom');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sauvegarde en cours...';
+        submitBtn.disabled = true;
+
+        // Re-enable button after 3 seconds (in case of validation errors)
+        setTimeout(() => {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }, 3000);
+    });
+
+    // Input focus animation
+    document.querySelectorAll('.form-control').forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.style.transform = 'scale(1.02)';
+        });
+
+        input.addEventListener('blur', function() {
+            this.parentElement.style.transform = 'scale(1)';
+        });
+    });
+
+    // Real-time validation feedback
+    document.getElementById('login').addEventListener('input', function() {
+        const value = this.value;
+        const helpText = this.nextElementSibling;
+
+        if (value.length < 3) {
+            helpText.style.color = '#dc3545';
+            helpText.textContent = 'Le login doit contenir au moins 3 caractères';
+        } else if (value.includes(' ')) {
+            helpText.style.color = '#dc3545';
+            helpText.textContent = 'Le login ne doit pas contenir d\'espaces';
+        } else {
+            helpText.style.color = '#6c757d';
+            helpText.textContent = 'Nom d\'utilisateur unique pour la connexion';
+        }
+    });
+</script>
+</body>
+</html>

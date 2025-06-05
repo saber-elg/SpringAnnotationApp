@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Annotation App - Connexion</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #f7f8fd 0%, #a0b6d5 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border: none;
+            padding: 3rem 2.5rem;
+            max-width: 450px;
+            width: 100%;
+        }
+
+        .app-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #7e56c5 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .app-icon i {
+            color: white;
+            font-size: 2.5rem;
+        }
+
+        .app-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3748;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .app-subtitle {
+            color: #718096;
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-control {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1rem 1rem 1rem 3.5rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: #f8fafc;
+        }
+
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background-color: white;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+            font-size: 1.2rem;
+            z-index: 10;
+        }
+
+        .btn-signin {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            width: 100%;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .btn-signin:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+
+        .btn-signin:active {
+            transform: translateY(0);
+        }
+
+        .security-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 2rem;
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .security-badge a {
+            color: #718096;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .security-badge a:hover {
+            color: #667eea;
+        }
+
+        .alert {
+            border-radius: 12px;
+            border: none;
+            margin-top: 1.5rem;
+            transition: all 0.8s ease-in-out;
+        }
+
+        .alert.fade-out {
+            opacity: 0;
+            transform: translateY(-20px) scale(0.95);
+            max-height: 0;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .alert-danger {
+            background-color: #fed7d7;
+            color: #c53030;
+        }
+
+        .alert-success {
+            background-color: #c6f6d5;
+            color: #2f855a;
+        }
+
+        .form-control::placeholder {
+            color: #a0aec0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <div class="card login-card">
+        <div class="app-icon">
+            <i class="bi bi-check-circle-fill"></i>
+        </div>
+
+        <h1 class="app-title">Annotations App</h1>
+        <p class="app-subtitle">Sign in to your account</p>
+
+        <form th:action="@{/login}" method="post">
+            <div class="form-group">
+                <i class="bi bi-person input-icon"></i>
+                <input type="text"
+                       id="username"
+                       name="username"
+                       class="form-control"
+                       placeholder="Username"
+                       required />
+            </div>
+
+            <div class="form-group">
+                <i class="bi bi-lock input-icon"></i>
+                <input type="password"
+                       id="password"
+                       name="password"
+                       class="form-control"
+                       placeholder="Password"
+                       required />
+            </div>
+
+            <button type="submit" class="btn btn-signin">
+                <i class="bi bi-box-arrow-in-right me-2"></i>
+                Sign in
+            </button>
+
+            <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+            <div th:if="${param.logout}" class="alert alert-success" id="logoutMessage">
+                Vous êtes déconnecté avec succès.
+            </div>
+        </form>
+
+        <div class="security-badge">
+            Developed by <a href="https://linkedin.com/in/mohamed-saber-elguelta" target="_blank"> Mohamed-Saber </a> & <a href="https://linkedin.com/in/soukaina-elhadifi" target="_blank"> Soukaina</a>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap 5 JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Auto-hide logout success message with smooth animation
+    document.addEventListener('DOMContentLoaded', function() {
+        const logoutMessage = document.getElementById('logoutMessage');
+        if (logoutMessage) {
+            // Show the message with a subtle entrance animation
+            logoutMessage.style.opacity = '0';
+            logoutMessage.style.transform = 'translateY(-10px)';
+
+            // Fade in the message
+            setTimeout(function() {
+                logoutMessage.style.opacity = '1';
+                logoutMessage.style.transform = 'translateY(0)';
+            }, 100);
+
+            // Start fade out after 3 seconds
+            setTimeout(function() {
+                logoutMessage.classList.add('fade-out');
+
+                // Remove from DOM after animation completes
+                setTimeout(function() {
+                    if (logoutMessage.parentNode) {
+                        logoutMessage.parentNode.removeChild(logoutMessage);
+                    }
+                }, 800); // Match the CSS transition duration
+            }, 3000);
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Tâches</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom Annotateur Styles -->
+    <style>
+        /* Navbar Styles */
+        .modern-navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            padding: 1rem 0;
+        }
+
+        .modern-navbar.scrolled {
+            padding: 0.5rem 0;
+            box-shadow: 0 2px 30px rgba(0,0,0,0.2);
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            color: white !important;
+            font-weight: 600;
+            font-size: 1.5rem;
+            text-decoration: none;
+        }
+
+        .brand-icon {
+            background: rgba(255,255,255,0.2);
+            padding: 0.5rem;
+            border-radius: 50%;
+            margin-right: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-icon i {
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: auto;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: white;
+            font-weight: 500;
+            background: rgba(255,255,255,0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-avatar i {
+            color: white;
+            font-size: 1rem;
+        }
+
+        .modern-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn-logout {
+            background: linear-gradient(45deg, #dc3545, #6f42c1);
+            color: white;
+        }
+
+        .btn-logout:hover {
+            background: linear-gradient(45deg, #c82333, #5a32a3);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+        }
+
+        .navbar-toggler {
+            border: none;
+            padding: 0.5rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+        }
+
+        .navbar-toggler i {
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: 0 0 0 0.2rem rgba(255,255,255,0.25);
+        }
+
+        @media (max-width: 768px) {
+            .nav-actions {
+                flex-direction: column;
+                width: 100%;
+                margin-top: 1rem;
+                gap: 0.5rem;
+            }
+
+            .modern-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .user-info {
+                width: 100%;
+                justify-content: center;
+                margin-bottom: 0.5rem;
+            }
+        }
+
+        /* Page Styles */
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .page-container {
+            padding-top: 2rem;
+            padding-bottom: 3rem;
+        }
+
+        .welcome-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .welcome-title {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-subtitle {
+            color: #6c757d;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .tasks-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .section-title {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0.5rem auto;
+            border-radius: 2px;
+        }
+
+        .modern-table {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+
+        .modern-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .modern-table th {
+            color: white;
+            font-weight: 600;
+            border: none;
+            padding: 1rem 0.75rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .modern-table td {
+            padding: 1rem 0.75rem;
+            border: none;
+            vertical-align: middle;
+            color: #495057;
+            font-weight: 500;
+        }
+
+        .modern-table tbody tr {
+            background: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        .modern-table tbody tr:hover {
+            background: rgba(102, 126, 234, 0.05);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .modern-table tbody tr:nth-child(even) {
+            background: rgba(248, 249, 250, 0.8);
+        }
+
+        .modern-table tbody tr:nth-child(even):hover {
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .progress-bar-custom {
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(102, 126, 234, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .btn-work {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            border: none;
+            color: white;
+            padding: 0.5rem 1.25rem;
+            border-radius: 20px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .btn-work:hover {
+            background: linear-gradient(45deg, #ff5252, #ff9f43);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .task-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.25rem 0.75rem;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .date-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.25rem 0.75rem;
+            background: linear-gradient(45deg, #17a2b8, #6610f2);
+            color: white;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Stats Cards */
+        .stats-section {
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-icon.tasks {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+
+        .stat-icon.progress {
+            background: linear-gradient(45deg, #28a745, #20c997);
+        }
+
+        .stat-icon.time {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        /* Animation for cards appearance */
+        .tasks-card, .welcome-section, .stat-card {
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .welcome-section, .tasks-card {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+
+            .welcome-title {
+                font-size: 1.6rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .modern-table {
+                font-size: 0.85rem;
+            }
+
+            .modern-table th,
+            .modern-table td {
+                padding: 0.75rem 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar for Annotateur -->
+<nav class="navbar navbar-expand-lg modern-navbar sticky-top">
+    <div class="container">
+        <div class="navbar-brand">
+            <div class="brand-icon">
+                <i class="fas fa-tasks"></i>
+            </div>
+            <span>Espace Annotateur</span>
+        </div>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="nav-actions">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <span th:text="${nom} + ' ' + ${prenom}">Nom Prénom</span>
+                </div>
+                <form th:action="@{/logout}" method="post" style="margin: 0;">
+                    <button type="submit" class="modern-btn btn-logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Se déconnecter</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container page-container">
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+        <h1 class="welcome-title">
+            <i class="fas fa-hand-wave" style="color: #feca57;"></i>
+            Bienvenue, <span th:text="${nom} + ' ' + ${prenom}">Nom Prénom</span> !
+        </h1>
+        <p class="welcome-subtitle">Gérez vos tâches d'annotation et suivez votre progression</p>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="stats-section">
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <div class="stat-card">
+                    <div class="stat-icon tasks">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <div class="stat-number" th:text="${#lists.size(taches)}">0</div>
+                    <div class="stat-label">Tâches Assignées</div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="stat-card">
+                    <div class="stat-icon progress">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-number">75%</div>
+                    <div class="stat-label">Progression Moyenne</div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="stat-card">
+                    <div class="stat-icon time">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-number">2</div>
+                    <div class="stat-label">Tâches Urgentes</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tasks Table -->
+    <div class="tasks-card">
+        <h2 class="section-title">
+            <i class="fas fa-list-check"></i>
+            Mes Tâches d'Annotation
+        </h2>
+
+        <div class="table-responsive">
+            <table class="table modern-table">
+                <thead>
+                <tr>
+                    <th><i class="fas fa-hashtag me-1"></i>ID</th>
+                    <th><i class="fas fa-database me-1"></i>Dataset</th>
+                    <th><i class="fas fa-calendar-alt me-1"></i>Date Limite</th>
+                    <th><i class="fas fa-chart-pie me-1"></i>Progression</th>
+                    <th><i class="fas fa-layer-group me-1"></i>Taille</th>
+                    <th><i class="fas fa-cogs me-1"></i>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="tache : ${taches}">
+                    <td>
+                            <span class="task-badge">
+                                <i class="fas fa-tag"></i>
+                                <span th:text="${tache.id}">1</span>
+                            </span>
+                    </td>
+                    <td>
+                        <strong th:text="${tache.dataset.nomDataset}">Dataset Name</strong>
+                    </td>
+                    <td>
+                            <span class="date-badge">
+                                <i class="fas fa-calendar"></i>
+                                <span th:text="${tache.delaiLimite}">2024-12-31</span>
+                            </span>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="progress-bar-custom flex-grow-1">
+                                <div class="progress-fill" th:style="'width: ' + ${avancements[tache.id]} + '%'"></div>
+                            </div>
+                            <span class="fw-bold" th:text="${avancements[tache.id]} + '%'">0%</span>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="fw-bold" th:text="${tache.taille}">100</span>
+                        <small class="text-muted"> éléments</small>
+                    </td>
+                    <td>
+                        <a th:href="@{'/annotateur/travailler/' + ${tache.id}}" class="btn-work">
+                            <i class="fas fa-play"></i>
+                            Travailler
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div th:if="${#lists.isEmpty(taches)}" class="text-center py-5">
+            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+            <h4 class="text-muted">Aucune tâche assignée</h4>
+            <p class="text-muted">Vous n'avez actuellement aucune tâche d'annotation assignée.</p>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Add scroll effect to navbar
+    window.addEventListener('scroll', function() {
+        const navbar = document.querySelector('.modern-navbar');
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
+
+    // Animate progress bars on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const progressBars = document.querySelectorAll('.progress-fill');
+        progressBars.forEach(bar => {
+            const width = bar.style.width;
+            bar.style.width = '0%';
+            setTimeout(() => {
+                bar.style.width = width;
+            }, 500);
+        });
+    });
+
+    // Add hover effect to table rows
+    document.querySelectorAll('.modern-table tbody tr').forEach(row => {
+        row.addEventListener('mouseenter', function() {
+            this.style.borderLeft = '4px solid #667eea';
+        });
+
+        row.addEventListener('mouseleave', function() {
+            this.style.borderLeft = 'none';
+        });
+    });
+
+    // Update stats dynamically (example)
+    function updateStats() {
+        const tasks = document.querySelectorAll('.modern-table tbody tr');
+        const totalTasks = tasks.length;
+
+        let totalProgress = 0;
+        let urgentTasks = 0;
+
+        tasks.forEach(task => {
+            const progressText = task.querySelector('.fw-bold').textContent;
+            const progress = parseInt(progressText.replace('%', ''));
+            totalProgress += progress;
+
+            // Check if task is urgent (example: less than 50% progress)
+            if (progress < 50) {
+                urgentTasks++;
+            }
+        });
+
+        const avgProgress = totalTasks > 0 ? Math.round(totalProgress / totalTasks) : 0;
+
+        // Update stats cards
+        document.querySelector('.stat-icon.progress').nextElementSibling.textContent = avgProgress + '%';
+        document.querySelector('.stat-icon.time').nextElementSibling.textContent = urgentTasks;
+    }
+
+    // Call updateStats on page load
+    updateStats();
+
+    // Add click animation to work buttons
+    document.querySelectorAll('.btn-work').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            const ripple = document.createElement('span');
+            ripple.style.cssText = `
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(255,255,255,0.5);
+                transform: scale(0);
+                animation: ripple 0.6s linear;
+                pointer-events: none;
+            `;
+
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+            ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+
+            this.appendChild(ripple);
+
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        });
+    });
+
+    // Add CSS for ripple animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+        .btn-work {
+            position: relative;
+            overflow: hidden;
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+</body>
+</html>
+
+

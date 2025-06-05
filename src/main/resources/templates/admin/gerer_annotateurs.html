@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gérer les Annotateurs</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom Admin Styles -->
+    <style>
+        /* Navbar Styles */
+        .modern-navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            padding: 1rem 0;
+        }
+
+        .modern-navbar.scrolled {
+            padding: 0.5rem 0;
+            box-shadow: 0 2px 30px rgba(0,0,0,0.2);
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            color: white !important;
+            font-weight: 600;
+            font-size: 1.5rem;
+            text-decoration: none;
+        }
+
+        .brand-icon {
+            background: rgba(255,255,255,0.2);
+            padding: 0.5rem;
+            border-radius: 50%;
+            margin-right: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-icon i {
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: auto;
+        }
+
+        .modern-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn-create {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .btn-create:hover {
+            background: linear-gradient(45deg, #218838, #1aa085);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn-list {
+            background: linear-gradient(45deg, #007bff, #6610f2);
+            color: white;
+        }
+
+        .btn-list:hover {
+            background: linear-gradient(45deg, #0056b3, #520dc2);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+        }
+
+        .btn-manage {
+            background: linear-gradient(45deg, #fd7e14, #e83e8c);
+            color: white;
+        }
+
+        .btn-manage:hover {
+            background: linear-gradient(45deg, #e36209, #d91a72);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(253, 126, 20, 0.4);
+        }
+
+        .btn-logout {
+            background: linear-gradient(45deg, #dc3545, #6f42c1);
+            color: white;
+        }
+
+        .btn-logout:hover {
+            background: linear-gradient(45deg, #c82333, #5a32a3);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+        }
+
+        .navbar-toggler {
+            border: none;
+            padding: 0.5rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+        }
+
+        .navbar-toggler i {
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: 0 0 0 0.2rem rgba(255,255,255,0.25);
+        }
+
+        @media (max-width: 768px) {
+            .nav-actions {
+                flex-direction: column;
+                width: 100%;
+                margin-top: 1rem;
+                gap: 0.5rem;
+            }
+
+            .modern-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Page Styles */
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .page-container {
+            padding-top: 2rem;
+            padding-bottom: 3rem;
+        }
+
+        .content-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin: 0 auto;
+        }
+
+        .page-title {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .page-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 1rem auto;
+            border-radius: 2px;
+        }
+
+        /* Success Alert */
+        .alert-success {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            border: none;
+            color: white;
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .alert-success::before {
+            content: '\f058';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 1.5rem;
+            margin-top: 0.1rem;
+            flex-shrink: 0;
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-success p {
+            margin: 0 0 0.5rem 0;
+        }
+
+        .alert-success p:last-child {
+            margin-bottom: 0;
+        }
+
+        .generated-password {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-top: 0.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            word-break: break-all;
+        }
+
+        /* Add Annotator Button */
+        .btn-add-annotator {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            border: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .btn-add-annotator:hover {
+            background: linear-gradient(45deg, #218838, #1aa085);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+            text-decoration: none;
+        }
+
+        /* Modern Table Styles */
+        .modern-table-container {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            overflow-x: auto;
+        }
+
+        .modern-table {
+            margin: 0;
+            width: 100%;
+            background: transparent;
+        }
+
+        .modern-table thead th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            padding: 1.25rem 1.5rem;
+            border: none;
+            position: relative;
+        }
+
+        .modern-table thead th:first-child {
+            border-top-left-radius: 0;
+        }
+
+        .modern-table thead th:last-child {
+            border-top-right-radius: 0;
+        }
+
+        .modern-table tbody tr {
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .modern-table tbody tr:hover {
+            background: rgba(102, 126, 234, 0.05);
+            transform: translateY(-1px);
+        }
+
+        .modern-table tbody td {
+            padding: 1.25rem 1.5rem;
+            border: none;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            vertical-align: middle;
+        }
+
+        .modern-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .annotator-name {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .annotator-name::before {
+            content: '\f007';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: #667eea;
+            font-size: 0.9rem;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            border: none;
+            font-weight: 500;
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            white-space: nowrap;
+        }
+
+        .btn-edit {
+            background: linear-gradient(45deg, #ffc107, #fd7e14);
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: linear-gradient(45deg, #e0a800, #e36209);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+        }
+
+        .btn-delete {
+            background: linear-gradient(45deg, #dc3545, #c82333);
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: linear-gradient(45deg, #c82333, #bd2130);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+        }
+
+        .btn-back {
+            background: linear-gradient(45deg, #6c757d, #495057);
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0 auto;
+            width: fit-content;
+        }
+
+        .btn-back:hover {
+            background: linear-gradient(45deg, #545b62, #383f45);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+            text-decoration: none;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #6c757d;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            color: #495057;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .content-card {
+                padding: 2rem 1.5rem;
+                margin: 1rem;
+            }
+
+            .page-title {
+                font-size: 1.8rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn-action {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .btn-add-annotator {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Animation for content appearance */
+        .content-card {
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modern-table tbody tr {
+            animation: fadeInRow 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .modern-table tbody tr:nth-child(1) { animation-delay: 0.1s; }
+        .modern-table tbody tr:nth-child(2) { animation-delay: 0.2s; }
+        .modern-table tbody tr:nth-child(3) { animation-delay: 0.3s; }
+        .modern-table tbody tr:nth-child(4) { animation-delay: 0.4s; }
+        .modern-table tbody tr:nth-child(5) { animation-delay: 0.5s; }
+
+        @keyframes fadeInRow {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Header Actions */
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .stats-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stats-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar integrated directly in the page -->
+<nav class="navbar navbar-expand-lg modern-navbar sticky-top">
+    <div class="container">
+        <div class="navbar-brand">
+            <div class="brand-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <span>Admin Dashboard</span>
+        </div>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="nav-actions">
+                <a th:href="@{/admin/creer-dataset}" class="modern-btn btn-create">
+                    <i class="fas fa-plus"></i>
+                    <span>Créer Dataset</span>
+                </a>
+                <a th:href="@{/admin/liste-datasets}" class="modern-btn btn-list">
+                    <i class="fas fa-list"></i>
+                    <span>Liste Datasets</span>
+                </a>
+                <a th:href="@{/admin/gerer-annotateurs}" class="modern-btn btn-manage">
+                    <i class="fas fa-users"></i>
+                    <span>Gérer Annotateurs</span>
+                </a>
+                <form th:action="@{/logout}" method="post" style="margin: 0;">
+                    <button type="submit" class="modern-btn btn-logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Se déconnecter</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container page-container">
+    <div class="content-card">
+        <!-- Success Message -->
+        <div th:if="${success}" class="alert alert-success">
+            <div class="alert-content">
+                <p th:text="${success}"></p>
+                <div th:if="${motDePasseGenere}" class="generated-password">
+                    <strong>Mot de passe généré :</strong>
+                    <span th:text="${motDePasseGenere}"></span>
+                </div>
+            </div>
+        </div>
+
+        <h1 class="page-title">
+            <i class="fas fa-users"></i>
+            Gérer les Annotateurs
+        </h1>
+
+        <!-- Header Actions -->
+        <div class="header-actions">
+            <div class="stats-card">
+                <i class="fas fa-users" style="color: #667eea; font-size: 1.5rem;"></i>
+                <div>
+                    <div class="stats-number" th:text="${annotateurs != null ? annotateurs.size() : 0}">0</div>
+                    <div class="stats-label">Annotateurs</div>
+                </div>
+            </div>
+            <a th:href="@{/admin/ajouter-annotateur}" class="btn-add-annotator">
+                <i class="fas fa-user-plus"></i>
+                Ajouter Annotateur
+            </a>
+        </div>
+
+        <!-- Check if annotators exist -->
+        <div th:if="${annotateurs != null and !annotateurs.empty}">
+            <div class="modern-table-container">
+                <table class="modern-table">
+                    <thead>
+                    <tr>
+                        <th>
+                            <i class="fas fa-user me-2"></i>Nom
+                        </th>
+                        <th>
+                            <i class="fas fa-user me-2"></i>Prénom
+                        </th>
+                        <th>
+                            <i class="fas fa-cogs me-2"></i>Actions
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="annotateur : ${annotateurs}">
+                        <td>
+                            <div class="annotator-name" th:text="${annotateur.utilisateur.nom}">Nom</div>
+                        </td>
+                        <td>
+                            <div class="annotator-name" th:text="${annotateur.utilisateur.prenom}">Prénom</div>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <a th:href="@{'/admin/modifier-annotateur/' + ${annotateur.utilisateur.id}}" class="btn-action btn-edit">
+                                    <i class="fas fa-edit"></i>
+                                    Modifier
+                                </a>
+                                <a th:href="@{'/admin/supprimer-annotateur/' + ${annotateur.utilisateur.id}}"
+                                   class="btn-action btn-delete"
+                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet annotateur ?')">
+                                    <i class="fas fa-trash"></i>
+                                    Supprimer
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${annotateurs == null or annotateurs.empty}" class="empty-state">
+            <i class="fas fa-users"></i>
+            <h3>Aucun annotateur trouvé</h3>
+            <p>Commencez par ajouter votre premier annotateur pour démarrer l'annotation.</p>
+            <a th:href="@{/admin/ajouter-annotateur}" class="btn-action btn-edit" style="margin-top: 1rem;">
+                <i class="fas fa-user-plus"></i>
+                Ajouter un Annotateur
+            </a>
+        </div>
+
+        <a th:href="@{/admin/home}" class="btn-back">
+            <i class="fas fa-arrow-left"></i>
+            Retour à l'accueil
+        </a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Add scroll effect to navbar
+    window.addEventListener('scroll', function() {
+        const navbar = document.querySelector('.modern-navbar');
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
+
+    // Add hover effects to table rows
+    document.querySelectorAll('.modern-table tbody tr').forEach(row => {
+        row.addEventListener('mouseenter', function() {
+            this.style.backgroundColor = 'rgba(102, 126, 234, 0.08)';
+        });
+
+        row.addEventListener('mouseleave', function() {
+            this.style.backgroundColor = '';
+        });
+    });
+
+    // Add click animations to action buttons
+    document.querySelectorAll('.btn-action').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            // Don't animate if it's a delete button with confirmation
+            if (this.classList.contains('btn-delete')) {
+                return;
+            }
+
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 150);
+        });
+    });
+
+    // Enhanced delete confirmation
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // Create custom confirmation modal effect
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = '';
+                if (confirm('⚠️ Êtes-vous sûr de vouloir supprimer cet annotateur ?\n\nCette action est irréversible.')) {
+                    window.location.href = this.href;
+                }
+            }, 150);
+        });
+    });
+
+    // Copy password to clipboard functionality
+    document.querySelectorAll('.generated-password').forEach(passwordDiv => {
+        passwordDiv.style.cursor = 'pointer';
+        passwordDiv.title = 'Cliquer pour copier le mot de passe';
+
+        passwordDiv.addEventListener('click', function() {
+            const password = this.textContent.split(': ')[1];
+            navigator.clipboard.writeText(password).then(() => {
+                // Visual feedback
+                const originalBg = this.style.backgroundColor;
+                this.style.backgroundColor = 'rgba(255, 255, 255, 0.4)';
+                this.innerHTML = this.innerHTML.replace('Mot de passe généré', 'Mot de passe copié ! ✓');
+
+                setTimeout(() => {
+                    this.style.backgroundColor = originalBg;
+                    this.innerHTML = this.innerHTML.replace('Mot de passe copié ! ✓', 'Mot de passe généré');
+                }, 2000);
+            });
+        });
+    });
+</script>
+</body>
+</html>
