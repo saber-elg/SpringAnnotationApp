@@ -1,4 +1,4 @@
-# 📝 AnnotationApp
+# 📝 Annotation Platform
 
 A **Spring Boot + Thymeleaf** web application for **collaborative sentence pair annotation** (NLI, semantic similarity, etc.).
 
