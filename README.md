@@ -1,89 +1,107 @@
-"# AnnotationApp"
+# 📝 AnnotationApp
 
-Application web **Spring Boot / Thymeleaf** pour la gestion et l’annotation collaborative de jeux de paires de phrases (NLI, similarité, etc.).
+A **Spring Boot + Thymeleaf** web application for **collaborative sentence pair annotation** (NLI, semantic similarity, etc.).
 
-> **Encadrant :** Pr. Tarik **Boudaa**  
-> **Contributeurs :** El Guelta Mohamed-Saber** · **El Hadifi Soukaina**
-
----
-
-## Fonctionnalités
-
-| Bloc | Ce que l’on peut faire |
-|------|------------------------|
-| **Authentification** | Connexion / déconnexion sécurisée via Spring Security. |
-| **Administration** | • Créer / modifier des annotateurs <br> • Activer / désactiver (suppression logique) |
-| **Datasets** | • Import CSV / JSON (`id,text1,text2`) <br> • Aperçu des 5 premières paires <br> • Affectation d’annotateurs <br> • Calcul de l’avancement (%) |
-| **Annotation** | Interface minimale où chaque annotateur étiquette ses paires restantes. |
-| **Export** | CSV final : `id,texte1,texte2,classe,annotateur,date`. |
----
-
-## Architecture rapide
-
-- `src/main/java`
-    - `controller`     ← couche web
-    - `service`        ← logique métier (import, export, métriques …)
-    - `entity`         ← entités JPA
-    - `repository`     ← interfaces Spring Data
-    - `security`       ← configuration Spring Security
-
-- `src/main/resources/templates`
-    - …                ← vues Thymeleaf (`.html`)
-
-
+> 🎓 **Supervisor:** Prof. Tarik **Boudaa**
+> 👥 **Contributors:** Mohamed-Saber **El Guelta**, Soukaina **El Hadifi**
 
 ---
 
-## Prérequis
+## 🚀 Key Features
 
-| Outil | Version conseillée                 |
-|-------|------------------------------------|
-| JDK   | 17 +                               |
-| Maven | 4.0 +                              |
-| MySQL | 8 + (ou tout SGDB compatible JDBC) |
+| Module                | Description                                                                                                 |
+| --------------------- | ----------------------------------------------------------------------------------------------------------- |
+| 🔐 **Authentication** | Secure login/logout via Spring Security.                                                                    |
+| ⚙️ **Administration** | - Create/edit annotators <br> - Enable/disable (logical deletion)                                           |
+| 📁 **Datasets**       | - Import CSV/JSON (`id, text1, text2`) <br> - Preview <br> - Assign annotators <br> - Progress tracking (%) |
+| 🧠 **Annotation**     | Minimal interface for annotators to label their assigned pairs.                                             |
+| 📤 **Export**         | Final export as CSV: `id, text1, text2, label, annotator, date`.                                            |
 
 ---
 
-## Installation & exécution
-
-```bash
-# 1. cloner le projet
-git clone https://github.com/saber-elg/SpringAnnotationApp.git
-
-# 2. configurer la BDD (src/main/resources/application.properties)
-#    spring.datasource.url, username, password
-
+## 🏗️ Project Structure
 
 ```
-Par défaut, les scripts Python sont cherchés dans ./scripts.
+src/main/java/
+├── controller/      ← Web layer (Spring MVC)
+├── service/         ← Business logic: import/export, metrics, etc.
+├── entity/          ← JPA entities
+├── repository/      ← Spring Data interfaces
+├── security/        ← Spring Security configuration
+```
 
-## Comptes de démo
-Rôle	Login / mot de passe
-Admin:	admin / ENSAH
-Annot:
-        med                              IDiWKPP4
-        soukaina                         Ax99gavQ
-        lee                              0SdTbmNX
-        test                             JNSjrvAd
+```
+src/main/resources/templates/
+└── *.html           ← Thymeleaf views
+```
 
-(cf. data.sql ou créer via l’interface admin)
+---
 
-## Parcours typique
-Connexion en tant qu’admin (/login).
+## ⚙️ Requirements
 
+| Tool  | Recommended Version              |
+| ----- | -------------------------------- |
+| JDK   | 17+                              |
+| Maven | 4.0+                             |
+| MySQL | 8+ (or any JDBC-compatible DBMS) |
 
-Onglet Datasets :
+---
 
-Créer → formulaire (nom, description, fichier CSV/JSON).
+## 🧪 Installation & Running
 
-Affecter → bouton Affecter → coche les annotateurs.
+```bash
+# 1. Clone the repository
+git clone https://github.com/saber-elg/SpringAnnotationApp.git
+cd SpringAnnotationApp
 
-Détails → aperçus, % d’avancement, export, métriques, spammeurs.
+# 2. Configure the database in:
+#    src/main/resources/application.properties
+#    → spring.datasource.url, username, password
 
-Annotation (profil annotateur) : liste de paires non étiquetées, choix du label, sauvegarde.
+# 3. Run the app
+mvn spring-boot:run
+```
 
-Export final → CSV signé (id, textes, label majoritaire, annotateur, date).
+> ℹ️ Python scripts are expected in the `./scripts` folder by default.
 
+---
 
-##  Demo 
-Vous pouvez consulter le demo dans le lien suivant: https://youtu.be/VgtuN56y99U
+## 👤 Demo Accounts
+
+| Role   | Username   | Password   |
+| ------ | ---------- | ---------- |
+| Admin  | `admin`    | `ENSAH`    |
+| Annot. | `med`      | `IDiWKPP4` |
+|        | `soukaina` | `Ax99gavQ` |
+|        | `lee`      | `0SdTbmNX` |
+|        | `test`     | `JNSjrvAd` |
+
+> 📄 See `data.sql` or use the admin interface to create new accounts.
+
+---
+
+## 🔄 Typical Workflow
+
+1. **Log in** via `/login`
+2. **Admin**:
+
+   * Go to *Datasets* tab → Create (name, description, CSV/JSON)
+   * Assign annotators
+   * View data preview, progress %, export, and metrics
+3. **Annotator**:
+
+   * See pending sentence pairs
+   * Label and save annotations
+4. **Export**:
+
+   * Final annotated CSV: `id, text1, text2, majority label, annotator, date`
+
+---
+
+## 📹 Live Demo
+
+▶️ Watch the full demonstration on YouTube:
+**[AnnotationApp - Demo](https://youtu.be/VgtuN56y99U)**
+
+    🎧 Note: The explanation in the video is in French.
+    🌐 You can enable English subtitles (CC) via YouTube settings.
